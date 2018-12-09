@@ -51,14 +51,15 @@ public class HuffProcessor {
 		in.reset();
 		writeCompressedBits(codings,in,out);
 		out.close();
-		
+
 	}
 	private void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void writeHeader(HuffNode root, BitOutputStream out) {
+
 		if(root.myValue > 0) {
 			out.writeBits(1, 1);
 			out.writeBits(8, root.myValue);
@@ -66,12 +67,37 @@ public class HuffProcessor {
 		}
 		writeHeader(root.myLeft, out);
 		writeHeader(root.myRight, out);
-		
 	}
 
 	private String[] makeCodingsFromTree(HuffNode root) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] encodings = new String[ALPH_SIZE + 1];
+		encodings = codingHelper(root,"",encodings);
+		return encodings;
+
+	}
+
+	private String[] codingHelper(HuffNode root, String string, String[] encodings) {
+		
+		if (root.myLeft== null && root.myRight ==null) {
+			encodings[root.myValue] = string;
+			return encodings;
+		}
+		
+		if(root.myLeft!= null) {
+			encodings = codingHelper(root.myLeft, string + "0", encodings);
+		}
+		if(root.myRight!= null) {
+			encodings = codingHelper(root.myRight, string + "1", encodings);
+		}
+
+		return encodings;
+		
+
+
+
+
+
+
 	}
 
 	private HuffNode makeTreeFromCounts(int[] counts) {
@@ -82,14 +108,14 @@ public class HuffProcessor {
 				pq.add(new HuffNode(i,counts[i],null,null));
 			}
 		}
-		
+
 
 		while (pq.size() > 1) {
-		    HuffNode left = pq.remove();
-		    HuffNode right = pq.remove();
-		    HuffNode t = new HuffNode(0, left.myWeight+right.myWeight, left, right);
-		    
-		    pq.add(t);
+			HuffNode left = pq.remove();
+			HuffNode right = pq.remove();
+			HuffNode t = new HuffNode(0, left.myWeight+right.myWeight, left, right);
+
+			pq.add(t);
 		}
 		HuffNode root = pq.remove();
 		return root;
