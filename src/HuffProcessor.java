@@ -54,7 +54,7 @@ public class HuffProcessor {
 
 	}
 	private void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) {
-		// TODO Auto-generated method stub
+
 
 	}
 
@@ -62,7 +62,7 @@ public class HuffProcessor {
 
 		if(root.myValue > 0) {
 			out.writeBits(1, 1);
-			out.writeBits(8, root.myValue);
+			out.writeBits(BITS_PER_WORD, root.myValue);
 			return;
 		}
 		writeHeader(root.myLeft, out);
@@ -77,12 +77,12 @@ public class HuffProcessor {
 	}
 
 	private String[] codingHelper(HuffNode root, String string, String[] encodings) {
-		
+
 		if (root.myLeft== null && root.myRight ==null) {
 			encodings[root.myValue] = string;
 			return encodings;
 		}
-		
+
 		if(root.myLeft!= null) {
 			encodings = codingHelper(root.myLeft, string + "0", encodings);
 		}
@@ -91,7 +91,7 @@ public class HuffProcessor {
 		}
 
 		return encodings;
-		
+
 
 
 
@@ -122,8 +122,17 @@ public class HuffProcessor {
 	}
 
 	private int[] readForCounts(BitInputStream in) {
-		// TODO Auto-generated method stub
-		return null;
+		int[] counts = new int [ALPH_SIZE +1];
+		while(true) {
+			int bits = in.readBits(BITS_PER_WORD);
+			if(bits==-1) {
+				counts[ALPH_SIZE] = 1;
+				
+			}
+			else {
+				counts[bits] +=1;
+			}
+		}
 	}
 
 	/**
