@@ -176,10 +176,7 @@ public class HuffProcessor {
 		if(bits != HUFF_TREE) {
 			throw new HuffException("illegal header starts with " + bits);
 		}
-		if(bits == -1) {
-			throw new HuffException("-1 bits " + bits);
-
-		}
+		
 
 		HuffNode root = readTreeHeader(in);
 		readCompressedBits(root, in, out);
